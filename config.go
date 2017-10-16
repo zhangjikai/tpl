@@ -31,6 +31,17 @@ func configFilePath() string {
 	return filepath.Join(currentUser.HomeDir, BASE_DIR, CONFIG_FILE)
 }
 
+func initBaseDir() {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	baseDir := filepath.Join(currentUser.HomeDir, BASE_DIR)
+	if !FileExists(baseDir) {
+		os.MkdirAll(baseDir, 0644)
+	}
+}
+
 // LoadConfig loads config message from the given file.
 func LoadConfig(file string) Config {
 	var config Config

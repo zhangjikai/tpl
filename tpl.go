@@ -30,10 +30,11 @@ var (
 
 func init() {
 	log.SetFlags(0)
+	initBaseDir()
 }
 
 // -1: file not exists
-//  0: normal file
+//  0: normal filegit
 //  1: directory
 func checkPath(path string) int {
 	fileInfo, err := os.Stat(path)
@@ -90,7 +91,8 @@ func handleArgs(args []string) {
 		log.Fatal("No parameters.")
 	}
 
-	config := LoadConfig(CONFIG_FILE)
+
+	config := LoadConfig(configFilePath())
 
 	op := args[0]
 
