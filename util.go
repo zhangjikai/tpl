@@ -9,14 +9,14 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	logger "github.com/sirupsen/logrus"
+	"log"
 )
 
 // CurrentRunPath returns the current running path of the program.
 func CurrentRunPath() string {
 	pwd, err := os.Getwd();
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	return pwd
 }

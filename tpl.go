@@ -19,8 +19,9 @@ const (
 	OP_SAVE                = "save"
 	OP_GET                 = "get"
 	OP_CONFIG              = "config"
+	BASE_DIR               = "tpl"
 	CONFIG_FILE            = "config.json"
-	DEFAULT_STORAGE_FOLDER = "tpl"
+	DEFAULT_STORAGE_FOLDER = "store"
 )
 
 var (
@@ -141,7 +142,7 @@ func handleArgs(args []string) {
 				log.Fatal("Invalid config value: " + value)
 			}
 			config.StorePath = absPath
-			SaveConfig(CONFIG_FILE, config)
+			SaveConfig(configFilePath(), config)
 		} else {
 			log.Fatal("Valid configuration types are: " + convertSetToString(validConfigSet))
 		}

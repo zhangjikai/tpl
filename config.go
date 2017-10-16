@@ -19,8 +19,16 @@ func defaultConfig() Config {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	config.StorePath = filepath.Join(currentUser.HomeDir, DEFAULT_STORAGE_FOLDER)
+	config.StorePath = filepath.Join(currentUser.HomeDir, BASE_DIR, DEFAULT_STORAGE_FOLDER)
 	return config
+}
+
+func configFilePath() string {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return filepath.Join(currentUser.HomeDir, BASE_DIR, CONFIG_FILE)
 }
 
 // LoadConfig loads config message from the given file.
