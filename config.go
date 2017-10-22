@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -13,37 +12,38 @@ type Config struct {
 	StorePath string
 }
 
-func defaultConfig() Config {
+func defaultConfig() (Config, error) {
 	var config Config
 	currentUser, err := user.Current()
 	if err != nil {
-		log.Fatal(err.Error())
+		return config, err
 	}
 	config.StorePath = filepath.Join(currentUser.HomeDir, BASE_DIR, DEFAULT_STORAGE_FOLDER)
-	return config
+	return config, nil
 }
 
-func configFilePath() string {
+func configFilePath() (string, error) {
 	currentUser, err := user.Current()
 	if err != nil {
-		log.Fatal(err.Error())
+		return "", err
 	}
-	return filepath.Join(currentUser.HomeDir, BASE_DIR, CONFIG_FILE)
+	return filepath.Join(currentUser.HomeDir, BASE_DIR, CONFIG_FILE), nil
 }
 
-func initBaseDir() {
+func initBaseDir() error {
 	currentUser, err := user.Current()
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
 	baseDir := filepath.Join(currentUser.HomeDir, BASE_DIR)
 	if !FileExists(baseDir) {
 		os.MkdirAll(baseDir, 0644)
 	}
+	return nil
 }
 
 // LoadConfig loads config message from the given file.
-func LoadConfig(file string) Config {
+func LoadConfig(file string) (Config, error) {
 	var config Config
 
 	if !FileExists(file) {
@@ -52,18 +52,19 @@ func LoadConfig(file string) Config {
 	configFile, err := os.Open(file)
 	defer configFile.Close()
 	if err != nil {
-		log.Fatal(err.Error())
+		return config, err
 	}
 	jsonParser := json.NewDecoder(configFile)
-	jsonParser.Decode(&config)
-	return config
+	err = jsonParser.Decode(&config)
+	return config, err
 }
 
 // SaveConfig saves config message to the given file.
-func SaveConfig(file string, config Config) {
+func SaveConfig(file string, config Config) error {
 	configJson, _ := json.MarshalIndent(config, "", "    ")
 	err := ioutil.WriteFile(file, configJson, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }

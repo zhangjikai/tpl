@@ -1,24 +1,23 @@
 package main
 
 import (
-	"os"
-
 	"fmt"
-
 	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
+	"strings"
 
-	"log"
+	"github.com/deckarep/golang-set"
 )
 
 // CurrentRunPath returns the current running path of the program.
-func CurrentRunPath() string {
-	pwd, err := os.Getwd();
+func CurrentRunPath() (string, error) {
+	pwd, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
-	return pwd
+	return pwd, nil
 }
 
 // Debug prints debug messages.
@@ -126,4 +125,20 @@ func CopyDir(src string, dst string) (err error) {
 		}
 	}
 	return
+}
+
+// GetFileWithPrefix returns the file names with specific prefix in dir folder.
+func GetFileWithPrefix(dir, prefix string, ignoreFiles mapset.Set) ([]string, error) {
+	var fileList []string
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		if file.IsDir() && strings.HasPrefix(file.Name(), prefix) && !ignoreFiles.Contains(file.Name()){
+			fileList = append(fileList, file.Name())
+		}
+	}
+	return fileList, nil
 }
