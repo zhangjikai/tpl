@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"syscall"
 )
 
 type Config struct {
@@ -36,6 +37,8 @@ func initBaseDir() error {
 		return err
 	}
 	baseDir := filepath.Join(currentUser.HomeDir, BASE_DIR)
+	mask := syscall.Umask(0)
+	defer syscall.Umask(mask)
 	if !FileExists(baseDir) {
 		os.MkdirAll(baseDir, 0755)
 	}
@@ -62,6 +65,8 @@ func LoadConfig(file string) (Config, error) {
 // SaveConfig saves config message to the given file.
 func SaveConfig(file string, config Config) error {
 	configJson, _ := json.MarshalIndent(config, "", "    ")
+	mask := syscall.Umask(0)
+	defer syscall.Umask(mask)
 	err := ioutil.WriteFile(file, configJson, 0755)
 	if err != nil {
 		return err
