@@ -37,7 +37,7 @@ func initBaseDir() error {
 	}
 	baseDir := filepath.Join(currentUser.HomeDir, BASE_DIR)
 	if !FileExists(baseDir) {
-		os.MkdirAll(baseDir, 0644)
+		os.MkdirAll(baseDir, 0755)
 	}
 	return nil
 }
@@ -62,7 +62,7 @@ func LoadConfig(file string) (Config, error) {
 // SaveConfig saves config message to the given file.
 func SaveConfig(file string, config Config) error {
 	configJson, _ := json.MarshalIndent(config, "", "    ")
-	err := ioutil.WriteFile(file, configJson, 0644)
+	err := ioutil.WriteFile(file, configJson, 0755)
 	if err != nil {
 		return err
 	}
