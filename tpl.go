@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"syscall"
 
 	"github.com/deckarep/golang-set"
 	"github.com/urfave/cli"
@@ -98,7 +99,9 @@ func moveFile(source, dest string, isDir bool) (error) {
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll(dest, 0644)
+	mask := syscall.Umask(0)
+	defer syscall.Umask(mask)
+	err = os.MkdirAll(dest, 0775)
 	if err != nil {
 		return err
 	}
@@ -233,7 +236,9 @@ func handleArgs(op string, args []string) error {
 			if err != nil {
 				return newErrorWithText("Invalid config value: " + value)
 			}
-			err = os.MkdirAll(absPath, 0644)
+			mask := syscall.Umask(0)
+			defer syscall.Umask(mask)
+			err = os.MkdirAll(absPath, 0755)
 			if err != nil {
 				return newErrorWithText("Invalid config value: " + value)
 			}
